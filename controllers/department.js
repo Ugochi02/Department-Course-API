@@ -1,5 +1,5 @@
 const departmentModel = require('../model/department.js');
-
+const courseModel = require('../model/course.js');
 
 exports.createDepartment = async (req, res) => {
     try {
@@ -110,7 +110,7 @@ exports.updateDepartment = async (req, res) => {
 exports.deleteDepartment = async ( req, res ) => {
     try {
         const { id } = req.params;
-        const department = await departmentModel.findByPk( id );
+        const department = await departmentModel.findById(id);
 
         if ( !department ) {
             return res.status( 404 ).json( {
@@ -118,14 +118,16 @@ exports.deleteDepartment = async ( req, res ) => {
             } );
         }
 
-        await department.destroy();
+        await courseModel.deleteMany({ department: department._id});
+        
+        await departmentModel.findByIdAndDelete(id);
 
-        res.status( 200 ).json( {
-            message: 'Department deleted successfully'
-        } );
+        res.status(200).json({
+      message: 'Department and its courses deleted successfully'
+    });
 
     } catch ( error ) {
-        res.status( 500 ).json( {
+        res.status(500).json( {
             message: error.message
         } );
     }

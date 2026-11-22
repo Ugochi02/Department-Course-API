@@ -121,15 +121,17 @@ exports.updateCourse = async (req, res) => {
 exports.deleteCourse = async ( req, res ) => {
     try {
         const { id } = req.params;
-        const course = await courseModel.findByPk(id);
+        const course = await courseModel.findById(id);
 
         if (!course) {
-            return res.status( 404 ).json( {
+            return res.status(404).json( {
                 message: 'course not found'
             } );
         }
 
-        await course.destroy();
+        await Department.findByIdAndUpdate(course.department, {$pull: { courses: course._id }});
+
+        await courseModel.findByIdAndDelete(id);
 
         res.status(200).json( {
             message: 'Course deleted successfully'
@@ -141,3 +143,4 @@ exports.deleteCourse = async ( req, res ) => {
         } );
     }
 };
+

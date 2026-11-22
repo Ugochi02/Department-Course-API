@@ -1,9 +1,7 @@
-// const { required } = require('joi');
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
     departmentId: {
-        // type: mongoose.Schema.Types.ObjectId
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'departments',
         required: true
