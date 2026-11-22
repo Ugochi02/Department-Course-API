@@ -1,0 +1,42 @@
+const Joi = require('joi');
+
+const createCourseValidation = (req, res, next) => {
+    const schema = Joi.object({
+        courseCode: Joi.string().trim().uppercase().min(2).max(10).required().messages({
+            'any.required': 'Course code is required',
+            'string.min': 'Course code must be at least 2 characters',
+            'string.max': 'Course code cannot exceed 10 characters',
+            'string.empty': 'Course code cannot be empty.'
+        }),
+        title: Joi.string().trim().min(3).max(100).required().messages({
+            'any.required': 'Title is required',
+            'string.empty': 'Title cannot be empty',
+            'string.min': 'Title must be at least 3 characters',
+            'string.max': 'Title cannot exceed 100 characters.'
+        }),
+        creditUnits: Joi.number().integer().min(1).max(8).required().messages({
+            'any.required': 'Credit Units are required',
+            'number.base': 'Credit Units must be a number',
+            'number.min': 'Credit Units must be at least 1',
+            'number.max': 'Credit Units cannot exceed 8.'
+        }),
+        departmentId: Joi.number().integer().positive().required().messages({
+            'any.required': 'Department ID is required',
+            'number.base': 'Department ID must be a number',
+            'number.positive': 'Department ID must be positive.'
+        }),
+    })
+
+    const { error } = schema.validate( req.body );
+
+    if ( error ) {
+        return res.status( 400 ).json( {
+            message: error.details[ 0 ].message
+        } );
+    }
+
+    next()
+}
+
+
+module.exports = { createCourseValidation };
